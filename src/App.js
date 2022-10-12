@@ -1,23 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
-
+import Axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Routes, Route, BrowserRouter as Router} from 'react-router-dom'
+import Page from './views/Page';
+import Criteria from './views/Criteria';
+import Variable from './views/Variable';
 function App() {
+  const [stkData, setStkData] = useState([]);
+  useEffect(()=>{
+    Axios.get('https://stockdataanalysisapi.herokuapp.com/data').then((res)=>{
+      setStkData(res.data);
+    })
+  },[]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="">
+      <Router>
+      {(
+        <Routes>
+          <Route path="/" element={<Page stkData={stkData} />} />
+          <Route path="/:stkId" element={<Criteria stkData={stkData} />} />
+          <Route
+            path="/page/:stkId/:criteriaId/:varId"
+            element={<Variable stkData={stkData} />}
+          />
+        </Routes>
+      ) 
+      }
+    </Router>
     </div>
   );
 }
